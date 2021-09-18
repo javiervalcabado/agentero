@@ -1,0 +1,51 @@
+
+syntax = "proto3";
+
+option go_package = "./agentero";
+
+
+package agentero;
+
+
+// After any edit in this file we have to run the following command
+// This creates or refreshes Agentero.pb.go and Agentero.grpc.pb.go
+/*
+protoc --go_out=. --go_opt=paths=source_relative \
+--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+agentero/agentero.proto
+*/
+
+
+
+// Service definition, new method definitions go here
+service Comms {
+
+	rpc CredentialSystem (LogRequest) returns (LogReply) {}
+	
+	rpc GetContactAndPoliciesById (ID) returns (ID) {}
+
+	rpc GetContactsAndPoliciesByMobileNumber (MobileNumber) returns (ID) {}
+}
+
+
+// Call from client side
+message LogRequest {
+	string name = 1;
+	string pass = 2;
+}
+
+
+// Answer from server side for LogRequest
+message LogReply {
+	string name = 1;
+	string success = 2;
+}
+
+message ID {
+	int32 ID = 1;
+}
+
+message MobileNumber {
+	int32 number = 1;
+}
+
