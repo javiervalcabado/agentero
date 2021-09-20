@@ -3,62 +3,60 @@ package main
 import (
 	"fmt"
 	"log"
-	"net"
+	//"net"
+	//"os"
+	"context"
+	"time"
 
-	pb "./agentero"
+	"google.golang.org/grpc"
+
+	pb "agentero/agentero"
 )
+
 
 const (
-	address     = "localhost:50051"
-	defaultName = "Valkaaaaa"
+	address     = "localhost:8080"
+	defaultName = "Guy Incognito"
 )
 
-type server struct {
-	// Method created in agenter_grpc.pb.go
-	pb.UnimplementedCommsServer
-}
+
 
 func main() {
-    fmt.Println("Client online")
-
+    fmt.Println("Starting client...")
+   
     conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	greeterClient := pb.NewCommsClient(conn)
 
-	// Contact the server and print out its response.
+	commsClient := pb.NewCommsClient(conn)
+
+/*
 	name := defaultName
 	if len(os.Args) > 1 {
 		name = os.Args[1]
 	}
+*/
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := greeterClient.CredentialSystem(ctx, &pb.LogRequest{
-		Name: name,
-		Pass: "huehuehue"
+
+	r, err := commsClient.CredentialSystem(ctx, &pb.LogRequest{
+		Name: defaultName,
+		Pass: "blablabla",
 		})
 
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-
 	if r.GetSuccess() {
-		log.Printf("(whipers) I'm in")	
+		log.Printf("-- Succesful login --")	
+	} else {
+		log.Printf("-- Login didn't work --")
 	}
 
-	
-
-
-
-
-
-
-
-
-    //fmt.Scanln() // wait for Enter Key
+    fmt.Scanln() // wait for Enter Key
 }
 

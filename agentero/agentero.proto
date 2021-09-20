@@ -1,6 +1,7 @@
 
 syntax = "proto3";
 
+// Package where we want the generated files
 option go_package = "./agentero";
 
 
@@ -8,7 +9,7 @@ package agentero;
 
 
 // After any edit in this file we have to run the following command
-// This creates or refreshes Agentero.pb.go and Agentero.grpc.pb.go
+// This creates or refreshes agentero.pb.go and agentero.grpc.pb.go
 /*
 protoc --go_out=. --go_opt=paths=source_relative \
 --go-grpc_out=. --go-grpc_opt=paths=source_relative \
@@ -37,8 +38,7 @@ message LogRequest {
 
 // Answer from server side for LogRequest
 message LogReply {
-	string name = 1;
-	string success = 2;
+	bool success = 1;
 }
 
 message ID {
