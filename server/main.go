@@ -9,6 +9,8 @@ import (
 	"google.golang.org/grpc"
 
 	pb 	"agentero/agentero" //"Protocol Buffer"
+
+	"agentero/policy_data" // Data structures regarding policies
 )
 
 const (
@@ -28,7 +30,16 @@ type server struct {
 
 func main() {
     fmt.Println("Starting server...")
-    startServer()
+    
+
+    
+   // startServer()
+
+	importData()
+
+
+
+
     // Initial call
 /*
     if (schedule_period = 0) {
@@ -62,3 +73,41 @@ func (server *server) CredentialSystem (ctx context.Context, logRequest *pb.LogR
 	}, nil
 }
 
+func importData () {
+
+    // Mobile numbers test
+    /*
+    mobileNumber, err := policy_data.CheckMobileNumber("1111111111")
+    if err != nil {
+    	fmt.Println("Ignoring policy entry: " + err.Error())
+    }
+
+    mobileNumber, err = policy_data.CheckMobileNumber("2(222)222222")
+    if err != nil {
+    	fmt.Println("Ignoring policy entry: " + err.Error())
+    }
+
+    mobileNumber, err = policy_data.CheckMobileNumber("3-3(3)33-33333")
+    if err != nil {
+    	fmt.Println("Ignoring policy entry: " + err.Error())
+    }
+
+    mobileNumber, err = policy_data.CheckMobileNumber("444444444")
+    if err != nil {
+    	fmt.Println("Ignoring policy entry: " + err.Error())
+    }    
+
+    fmt.Println(mobileNumber)
+    */
+}
+
+
+// Returns a policy holder and its policies by userID
+func GetContactAndPoliciesById (userID int) {
+
+}
+
+
+func GetContactsAndPoliciesByMobileNumber (mobileNumber string) {
+
+}

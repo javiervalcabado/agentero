@@ -3,14 +3,15 @@ package main
 import (
 	"fmt"
 	"log"
-	//"net"
 	//"os"
 	"context"
 	"time"
 
 	"google.golang.org/grpc"
 
-	pb "agentero/agentero"
+	pb "agentero/agentero"	// Protocol Buffer
+
+	//"agentero/policy_data" // Data structures regarding policies
 )
 
 
