@@ -48,4 +48,3 @@ message ID {
 message MobileNumber {
 	int32 number = 1;
 }
-

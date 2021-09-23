@@ -9,13 +9,13 @@ import (
 )
 
 type InsurancePolicy struct {
-	MobileNumber 	string		`json: "mobile_number"`
-	Premium 		string		`json: "premium"`
-	Type 			string 		`json: "type"`
+	MobileNumber 	string		`json:"mobile_number"`
+	Premium 		int			`json:"premium"`
+	Type 			string 		`json:"type"`
 }
 
 func (insurancePolicy *InsurancePolicy) PrintInsurancePolicy () {
-	fmt.Println("Policy mobile number: " + insurancePolicy.MobileNumber + ", Premium: " + insurancePolicy.Premium + ", Type: " + insurancePolicy.Type)
+	fmt.Println("Policy mobile number: " + insurancePolicy.MobileNumber + ", Premium: " + strconv.Itoa(insurancePolicy.Premium) + ", Type: " + insurancePolicy.Type)
 }
 
 // Deletes '(', ')', '-', and extra espaces 

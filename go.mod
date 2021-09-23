@@ -3,8 +3,11 @@ module agentero
 go 1.17
 
 require (
+	github.com/go-co-op/gocron v1.9.0 // indirect
 	github.com/golang/protobuf v1.4.3 // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
 	golang.org/x/net v0.0.0-20200822124328-c89045814202 // indirect
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd // indirect
 	golang.org/x/text v0.3.0 // indirect
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect

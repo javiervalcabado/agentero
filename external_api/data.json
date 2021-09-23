@@ -1,0 +1,66 @@
+{
+   "users":[
+      {
+         "name":"user1",
+         "mobile_number":"1111111111"
+      },
+      {
+         "name":"user2",
+         "mobile_number":"222 222 2222"
+      },
+      {
+         "name":"user3",
+         "mobile_number":"(333) 333 3333"
+      },
+      {
+         "name":"user4",
+         "mobile_number":"(444) 444-4444"
+      },
+      {
+         "name":"user5",
+         "mobile_number":"555-555-5555"
+      }
+   ],
+   "policies":[
+      {
+         "mobile_number":"1111111111",
+         "premium":2000,
+         "type":"homeowner"
+      },
+      {
+         "mobile_number":"111 111 1111",
+         "premium":200,
+         "type":"renter"
+      },
+      {
+         "mobile_number":"123-456-7892",
+         "premium":1500,
+         "type":"homeowner"
+      },
+      {
+         "mobile_number":"(123) 456-7893",
+         "premium":155,
+         "type":"personal_auto"
+      },
+      {
+         "mobile_number":"123-456-7894",
+         "premium":1000,
+         "type":"homeowner"
+      },
+      {
+         "mobile_number":"123-456-7890",
+         "premium":500,
+         "type":"personal_auto"
+      },
+      {
+         "mobile_number":"1234567892",
+         "premium":100,
+         "type":"life"
+      },
+      {
+         "mobile_number":"(123)456-7892",
+         "premium":200,
+         "type":"homeowner"
+      }
+   ]
+}

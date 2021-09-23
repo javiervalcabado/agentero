@@ -6,8 +6,8 @@ import (
 )
 
 type PolicyHolder struct {	// users
-	Name 		 string		`json: "name"`
-	MobileNumber string 	`json: "mobile_number"`	
+	Name 		 string		`json:"name"`
+	MobileNumber string 	`json:"mobile_number"`	
 }
 
 func (policyHolder *PolicyHolder) PrintPolicyHolder () {
