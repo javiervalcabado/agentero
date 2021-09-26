@@ -6,10 +6,11 @@ import (
 )
 
 type PolicyHolder struct {	// users
+	ID			 string		`json:"ID"`
 	Name 		 string		`json:"name"`
 	MobileNumber string 	`json:"mobile_number"`	
 }
 
-func (policyHolder *PolicyHolder) PrintPolicyHolder () {
-	fmt.Println("Policy Holder " + policyHolder.Name + " (mobile phone: " + policyHolder.MobileNumber + ")")
+func (policyHolder *PolicyHolder) PrintInfo () {
+	fmt.Println("Policy Holder " + policyHolder.Name + " with ID " + policyHolder.ID + " (mobile phone: " + policyHolder.MobileNumber + ")")
 }

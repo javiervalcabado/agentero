@@ -19,8 +19,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CommsClient interface {
 	CredentialSystem(ctx context.Context, in *LogRequest, opts ...grpc.CallOption) (*LogReply, error)
-	GetContactAndPoliciesById(ctx context.Context, in *ID, opts ...grpc.CallOption) (*ID, error)
-	GetContactsAndPoliciesByMobileNumber(ctx context.Context, in *MobileNumber, opts ...grpc.CallOption) (*ID, error)
+	GetContactAndPoliciesById(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*ContactAndPolicies, error)
+	GetContactsAndPoliciesByMobileNumber(ctx context.Context, in *MobileNumber, opts ...grpc.CallOption) (*ContactAndPolicies, error)
 }
 
 type commsClient struct {
@@ -40,8 +40,8 @@ func (c *commsClient) CredentialSystem(ctx context.Context, in *LogRequest, opts
 	return out, nil
 }
 
-func (c *commsClient) GetContactAndPoliciesById(ctx context.Context, in *ID, opts ...grpc.CallOption) (*ID, error) {
-	out := new(ID)
+func (c *commsClient) GetContactAndPoliciesById(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*ContactAndPolicies, error) {
+	out := new(ContactAndPolicies)
 	err := c.cc.Invoke(ctx, "/agentero.Comms/GetContactAndPoliciesById", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -49,8 +49,8 @@ func (c *commsClient) GetContactAndPoliciesById(ctx context.Context, in *ID, opt
 	return out, nil
 }
 
-func (c *commsClient) GetContactsAndPoliciesByMobileNumber(ctx context.Context, in *MobileNumber, opts ...grpc.CallOption) (*ID, error) {
-	out := new(ID)
+func (c *commsClient) GetContactsAndPoliciesByMobileNumber(ctx context.Context, in *MobileNumber, opts ...grpc.CallOption) (*ContactAndPolicies, error) {
+	out := new(ContactAndPolicies)
 	err := c.cc.Invoke(ctx, "/agentero.Comms/GetContactsAndPoliciesByMobileNumber", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -63,8 +63,8 @@ func (c *commsClient) GetContactsAndPoliciesByMobileNumber(ctx context.Context, 
 // for forward compatibility
 type CommsServer interface {
 	CredentialSystem(context.Context, *LogRequest) (*LogReply, error)
-	GetContactAndPoliciesById(context.Context, *ID) (*ID, error)
-	GetContactsAndPoliciesByMobileNumber(context.Context, *MobileNumber) (*ID, error)
+	GetContactAndPoliciesById(context.Context, *UserID) (*ContactAndPolicies, error)
+	GetContactsAndPoliciesByMobileNumber(context.Context, *MobileNumber) (*ContactAndPolicies, error)
 	mustEmbedUnimplementedCommsServer()
 }
 
@@ -75,10 +75,10 @@ type UnimplementedCommsServer struct {
 func (UnimplementedCommsServer) CredentialSystem(context.Context, *LogRequest) (*LogReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CredentialSystem not implemented")
 }
-func (UnimplementedCommsServer) GetContactAndPoliciesById(context.Context, *ID) (*ID, error) {
+func (UnimplementedCommsServer) GetContactAndPoliciesById(context.Context, *UserID) (*ContactAndPolicies, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetContactAndPoliciesById not implemented")
 }
-func (UnimplementedCommsServer) GetContactsAndPoliciesByMobileNumber(context.Context, *MobileNumber) (*ID, error) {
+func (UnimplementedCommsServer) GetContactsAndPoliciesByMobileNumber(context.Context, *MobileNumber) (*ContactAndPolicies, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetContactsAndPoliciesByMobileNumber not implemented")
 }
 func (UnimplementedCommsServer) mustEmbedUnimplementedCommsServer() {}
@@ -113,7 +113,7 @@ func _Comms_CredentialSystem_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _Comms_GetContactAndPoliciesById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ID)
+	in := new(UserID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -125,7 +125,7 @@ func _Comms_GetContactAndPoliciesById_Handler(srv interface{}, ctx context.Conte
 		FullMethod: "/agentero.Comms/GetContactAndPoliciesById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommsServer).GetContactAndPoliciesById(ctx, req.(*ID))
+		return srv.(CommsServer).GetContactAndPoliciesById(ctx, req.(*UserID))
 	}
 	return interceptor(ctx, in, info, handler)
 }

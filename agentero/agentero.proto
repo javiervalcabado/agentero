@@ -23,9 +23,9 @@ service Comms {
 
 	rpc CredentialSystem (LogRequest) returns (LogReply) {}
 	
-	rpc GetContactAndPoliciesById (ID) returns (ID) {}
+	rpc GetContactAndPoliciesById (UserID) returns (ContactAndPolicies) {}
 
-	rpc GetContactsAndPoliciesByMobileNumber (MobileNumber) returns (ID) {}
+	rpc GetContactsAndPoliciesByMobileNumber (MobileNumber) returns (ContactAndPolicies) {}
 }
 
 
@@ -41,10 +41,39 @@ message LogReply {
 	bool success = 1;
 }
 
-message ID {
-	int32 ID = 1;
+message UserID {
+	string ID = 1;
+}
+
+message ContactAndPolicies {
+	bool success = 1;
+	bytes content = 2;
 }
 
 message MobileNumber {
-	int32 number = 1;
+	string number = 1;
 }
+
+
+/*
+// Possible future upgrade: switch to directly using objects already created instead of 'bytes' for JSON transfer
+
+message ContactAndPolicies {
+	bool success = 1;
+	PolicyHolder user = 2;
+	repeated InsurancePolicy policies = 3;
+}
+
+message PolicyHolder {
+	string ID = 1;
+	string Name = 2;
+	string MobileNumber = 3;
+}
+
+message InsurancePolicy {
+	string ID = 1;
+	string MobileNumber = 2;
+	int32 Premium = 3;
+	string Type = 4;
+}
+*/

@@ -9,12 +9,13 @@ import (
 )
 
 type InsurancePolicy struct {
+	ID			 	string		`json:"ID"`
 	MobileNumber 	string		`json:"mobile_number"`
 	Premium 		int			`json:"premium"`
 	Type 			string 		`json:"type"`
 }
 
-func (insurancePolicy *InsurancePolicy) PrintInsurancePolicy () {
+func (insurancePolicy *InsurancePolicy) PrintInfo () {
 	fmt.Println("Policy mobile number: " + insurancePolicy.MobileNumber + ", Premium: " + strconv.Itoa(insurancePolicy.Premium) + ", Type: " + insurancePolicy.Type)
 }
 

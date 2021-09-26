@@ -19,14 +19,23 @@ import (
 )
 
 const (
-	port = ":8080"
+	gRPCPort = ":8080"
+	APIPort	 = ":8081"
 )
 
 var (
 	// Flag for runtime (go run <this file's route> -schedule_period=<minutes>)
 	// -schedule_period = --schedule_period
 	schedule_period = flag.Int("schedule_period", 0, "Minutes between each server call afer initial call")
+
+	// Flag for AMS API calls. Right now it's useless
+	ams_api_url = flag.String("ams-api-url", "", "URL for connection to AMS API")
+	
+	// Struct to unmarshal API data
 	apiData 		= APIData{}
+	jsonContents	= []byte{}
+	
+	// Structures that store locally the data from API calls
 	users 			= []policy_data.PolicyHolder{}
 	policies 		= []policy_data.InsurancePolicy{}
 )
@@ -37,37 +46,34 @@ type server struct {
 }
 
 
-// The data we are receiving from the 'external API'
+// Not used right now, could store all different information from the API or a subset
 type APIData struct {
 	Users 		[]policy_data.PolicyHolder		`json: "users"`
 	Policies 	[]policy_data.InsurancePolicy	`json: "policies"`
 }
 
-
-
-
-func main() {
-    fmt.Println("Starting server...")
-  
-
-  	importData()
-
-    //startServer()
-
-
-
-
-    fmt.Scanln() // wait for Enter Key
+// Struct used to manage the gRPC methods called by client
+type ContactAndPolicies struct {
+	User 		policy_data.PolicyHolder 		`json: "user"`
+	Policies 	[]policy_data.InsurancePolicy	`json: "policies"`
 }
 
+func main() {
+    fmt.Println("Starting...")
+  
+  	importData()
 
+    startServer()
+
+}
+
+// We launch the gRPC server to listen for the client
 func startServer () {
     fmt.Println("Starting server...")
 
-	//flag.Parse()
-	lis, err := net.Listen("tcp", port)
+	lis, err := net.Listen("tcp", gRPCPort)
 	if err != nil {
-		  log.Fatalf("Error listening port %d: %v", port, err)
+		  log.Fatalf("Error listening port %d: %v", gRPCPort, err)
 	}
 
 	grpcServer := grpc.NewServer()
@@ -76,102 +82,80 @@ func startServer () {
 		log.Fatalf("Error serving to serve: %v", err)
 	}
 
-	    fmt.Println("Continuing with  server...")
-
+	fmt.Println("Continuing with server...")
 }
 
 // The server receives the request from the client and simulates a credential check
 func (server *server) CredentialSystem (ctx context.Context, logRequest *pb.LogRequest) (*pb.LogReply, error) {
-	log.Printf("Received log request from %v (password=%v)", logRequest.GetName(), logRequest.GetPass())
+	log.Println("Received log request from " + logRequest.GetName() + " (password=" + logRequest.GetPass() + ")")
 	return &pb.LogReply{
 		Success: true,
 	}, nil
 }
 
+// The server receives the request for the user and its policies by its ID
+func (server *server) GetContactAndPoliciesById (ctx context.Context, userID *pb.UserID) (*pb.ContactAndPolicies, error) {
+	fmt.Println("Received contact & policies request (userID = " + userID.GetID() + ")")
 
-// Receives all API data and populates the local DDBB with that information
-// Upgrade: checks if the data is already in memory so there are no repetitions
+	// We ask the API for the data and then we prepare it to send: if anything fails, it returns error
+	apiResult, err := api.ContactAndPoliciesById(userID.GetID())
+	result, err := json.Marshal(apiResult)
+
+	if err != nil {
+		return &pb.ContactAndPolicies {
+		Success: false,
+		Content: nil,
+		}, err
+	} 
+
+	// If everything went right, we send the resut from the API to the client
+	return &pb.ContactAndPolicies {
+		Success: true,
+		Content: result,
+	}, nil
+}
+
+
+
+//  The server receives the request for the user and its policies by its mobile number
+func (server *server) GetContactsAndPoliciesByMobileNumber (ctx context.Context, userMobileNumber *pb.MobileNumber) (*pb.ContactAndPolicies, error) {
+	fmt.Println("Received contact & policies request (mobile number = " + userMobileNumber.GetNumber() + ")")
+
+	// We ask the API for the data and then we prepare it to send: if anything fails, it returns error
+	apiResult, err := api.ContactAndPoliciesByMobileNumber(userMobileNumber.GetNumber())
+	result, err := json.Marshal(apiResult)
+
+	if err != nil {
+		return &pb.ContactAndPolicies {
+		Success: false,
+		Content: nil,
+		}, err
+	} 
+
+	// If everything went right, we send the resut from the API to the client
+	return &pb.ContactAndPolicies {
+		Success: true,
+		Content: result,
+	}, nil
+}
+
+
+// Calls the external API based on the schedule_period flag
 func importData () {
 	
-
 	flag.Parse()
 	fmt.Print("Flag 'schedule_period' = " + strconv.Itoa(*schedule_period) + ", so we call the API ")
 
   	if (*schedule_period == 0) {
   		fmt.Println("just once")
-  		callAPI()
+  		api.PrepareAPI(*ams_api_url, APIPort)
   	} else {
   		fmt.Println("every " +  strconv.Itoa(*schedule_period) + " minutes")
 	  	scheduler := gocron.NewScheduler(time.UTC)
-		scheduler.Every(*schedule_period).Second().Do( 
+		scheduler.Every(*schedule_period).Minute().Do( 
 			func (){
-				callAPI()
+				api.PrepareAPI(*ams_api_url, APIPort)
 			})
 		scheduler.StartAsync()
   	}
-
-
-
-    // Mobile numbers test
-    
-  	if (1==0) {
-  		    mobileNumber, err := policy_data.CheckMobileNumber("1111111111")
-    if err != nil {
-    	fmt.Println("Ignoring policy entry: " + err.Error())
-    }
-
-    mobileNumber, err = policy_data.CheckMobileNumber("2(222)222222")
-    if err != nil {
-    	fmt.Println("Ignoring policy entry: " + err.Error())
-    }
-
-    mobileNumber, err = policy_data.CheckMobileNumber("3-3(3)33-33333")
-    if err != nil {
-    	fmt.Println("Ignoring policy entry: " + err.Error())
-    }
-
-    mobileNumber, err = policy_data.CheckMobileNumber("444444444")
-    if err != nil {
-    	fmt.Println("Ignoring policy entry: " + err.Error())
-    }    
-
-    fmt.Println(mobileNumber)
-  	}
-
-
-
-}
-
-// Calls external API and stores the contents of the database
-func callAPI () {
-	fmt.Println("Calling external API...")
-	
-
-	if (1 == 0) {
-		jsonContents := api.ReadData()
-
-	apiData := APIData{}
-	json.Unmarshal(jsonContents, &apiData)
-	fmt.Println(apiData.Users[1])
-
-	fmt.Println("********")
-
-	fmt.Println(apiData.Policies[1])		
-	}
-	
-
-	//for i := 0; i < len(users.Users); i++ {
-	//}
-}
-
-
-
-// Returns a policy holder and its policies by userID
-func GetContactAndPoliciesById (userID int) {
-
-}
-
-// Returns a single policyholder and its policies by MobileNumber
-func GetContactsAndPoliciesByMobileNumber (mobileNumber string) {
-
 }
